@@ -22,6 +22,7 @@ export interface IUserInput {
   password: string;
   username: string;
 }
+
 export interface EncodeResult {
   token: string;
   expires: number;

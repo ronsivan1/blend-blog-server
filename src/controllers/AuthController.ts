@@ -3,31 +3,28 @@ import { Request, Response } from "express";
 import { getRepository, getConnection } from "typeorm";
 import { HttpStatusEnum, IUser, IUserInput } from "../types";
 import { User } from "../entity/User";
-import { jwtSecret } from "../config";
-import * as jwt from "jsonwebtoken";
-
+import createToken from '../functions/createToken'
 class AuthController {
-  static createToken = async (
-    user: IUser,
-    expiresIn: number
-  ): Promise<string> => {
-    const secret: string = jwtSecret;
-    const token = jwt.sign(user, secret, { expiresIn });
-    return token;
+  static validateToken = (req: Request, res: Response) => {
+    console.log("Token validated, user authorized")
+
+    return res.status(HttpStatusEnum.SUCCESS).json({
+      message: "Token validated"
+    });
   };
 
-  static login = async (req: Request, res: Response): Promise<Response> => {
-    let { username, password } = req.body;
+  static login = async (req: Request, res: Response) => {
+    let {username, password} = req.body;
     console.log(username, password);
     if (!(username && password)) {
       return res.status(HttpStatusEnum.BAD_REQUEST).json("Empty fields");
     }
 
     let user = await getRepository(User)
-      .createQueryBuilder("user")
-      .where("user.username = :username", { username: username })
-      .addSelect("user.password")
-      .getOne();
+       .createQueryBuilder("user")
+       .where("user.username = :username", {username: username})
+       .addSelect("user.password")
+       .getOne();
 
     if (!user) {
       return res.status(HttpStatusEnum.BAD_REQUEST).json("User not found");
@@ -43,17 +40,26 @@ class AuthController {
       email: user.email,
       username: user.username,
     };
-    const expiresIn: number = 60 * 60 * 24;
-    const token = await AuthController.createToken(userResponse, expiresIn);
 
-    return res.json({
-      token,
-      user: userResponse,
+    await createToken(userResponse, (error, token) => {
+      if (error) {
+        console.error("Unable to sign token: ", error)
+
+        return res.status(HttpStatusEnum.UNAUTHORIZED).json("Unauthorized")
+      } else if (token) {
+        return res.status(HttpStatusEnum.SUCCESS).json({
+          message: "Auth Successful",
+          token,
+          user: userResponse
+        });
+      }
     });
+
+    //return res.status(HttpStatusEnum.SERVER_ERROR).json("Failed to create token");
   };
 
   static register = async (req: Request, res: Response): Promise<Response> => {
-    let { email, password, username } = req.body;
+    let {email, password, username} = req.body;
     let userInput: IUserInput = {
       email: email,
       username: username,
@@ -64,16 +70,16 @@ class AuthController {
     userInput.password = hashedPass;
     try {
       await getConnection()
-        .createQueryBuilder()
-        .insert()
-        .into(User)
-        .values(userInput)
-        .execute();
+         .createQueryBuilder()
+         .insert()
+         .into(User)
+         .values(userInput)
+         .execute();
     } catch (error) {
-      return res.status(HttpStatusEnum.FORBIDDEN).json({ error: error });
+      return res.status(HttpStatusEnum.FORBIDDEN).json({error: error});
     }
     return res.status(HttpStatusEnum.SUCCESS_NO_CONTENT).json("User created");
   };
 }
 
-export default AuthController;
+export default AuthController

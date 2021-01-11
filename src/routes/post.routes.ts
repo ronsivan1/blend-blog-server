@@ -1,11 +1,11 @@
 import { Router } from "express";
 import PostController from "../controllers/PostController";
-import Authorization from "../middleware/Authorization";
+import validateToken from "../middleware/validateToken";
 const router = Router();
 
-router.post("/", Authorization, PostController.createPost);
-router.put("/:id", Authorization, PostController.updatePost);
-router.delete("/:id", PostController.deletePost);
+router.post("/", validateToken, PostController.createPost);
+router.put("/:id", validateToken, PostController.updatePost);
+router.delete("/:id", validateToken, PostController.deletePost);
 router.get("/:id", PostController.singlePost);
 router.get("/", PostController.allPosts);
 

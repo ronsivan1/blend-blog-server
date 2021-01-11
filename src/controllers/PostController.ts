@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { HttpStatusEnum } from "../types";
 import { Post } from "../entity/Post";
+
 class PostController {
   static createPost = async (
     req: Request,
@@ -12,6 +13,7 @@ class PostController {
       return res.status(HttpStatusEnum.BAD_REQUEST).json("Empty fields");
     }
     try {
+      console.log(" user_ID: ", req.user_ID)
       let post = await getRepository(Post)
         .create({
           title: req.body.title,
@@ -73,7 +75,7 @@ class PostController {
     let post: Post = result.raw[0];
     if (post) {
       return res.json({ post: post });
-    } else return res.status(HttpStatusEnum.UNAUTHORIZED).json("Unathorized");
+    } else return res.status(HttpStatusEnum.UNAUTHORIZED).json("Unauthorized");
   };
 
   static deletePost = async (
@@ -82,13 +84,13 @@ class PostController {
   ): Promise<Response> => {
     const post = await getRepository(Post).findOne(req.params.id);
     if (!post) {
-      res.status(HttpStatusEnum.NOT_FOUND).json("Post not found");
+      return res.status(HttpStatusEnum.NOT_FOUND).json("Post not found");
     } else if (post.creatorId !== req.user_ID) {
-      res.status(HttpStatusEnum.UNAUTHORIZED).json("Post not found");
+      return res.status(HttpStatusEnum.UNAUTHORIZED).json("Unauthorized");
     }
     await Post.delete(req.params.id);
 
-    return res.json("Post deleted successfuly");
+    return res.json("Post deleted successfully");
   };
 }
 
