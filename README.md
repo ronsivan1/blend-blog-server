@@ -1,6 +1,7 @@
-# Dewin's Blog app
+# Fullstack App README Template
 
-I developed **Blog** app as my final project during the [neuefische](https://www.neuefische.de) web developer bootcamp in fall 2019.
+Dewin developed this server as part of a **Blog App** for a school project,
+together with Ron Sivan who helped with refactoring and fixing bugs.
 
 ![InKurz App demo](https://media.giphy.com/media/WOBoyXbPUD2RWjEuQc/giphy.gif)
 
@@ -15,35 +16,39 @@ I developed **Blog** app as my final project during the [neuefische](https://www
 ## Introduction
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
 ## Technologies
 
-The app was built [create-react-app](https://create-react-app.dev/) and MERN Stack:
+The app was built [create-react-app](https://create-react-app.dev/) and:
 
-- MongoDB
+- PostgreSQL
 - Express
 - React
 - Node.js
 
 ### Additional dependencies
 
-- bcrypt
+- argon2
+- body-parser
+- class-validator
 - cors
-- mongoose
-- prop-types
-- react-router-dom
-- react-scripts
-- styled-components
-- styled-icons
-- material-ui
-- gravatar
+- express
+- express-session
+- jsonwebtoken
+- jwt-decode
+- morgan
+- passport
+- passport-jwt
+- pg
+- reflect-metadata
+- typeorm
+- typescript
+- typescript-rest
 
 ### Dev dependencies
 
-- cypress
-- eslint-plugin-cypress
 - nodemon
-- npm-run-all
-- storybook
+- ts-node
 
 ## Setup
 
